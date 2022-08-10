@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Mastermind</title>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.js"
+      integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <script>
+    var boardGameJson = {};
+    var types = [];
+    function createBoardGameJson() {
+      console.log("create board game");
+      var name = $("#name").val();
+      var dbtotalCount = $("#dbtotalCount").val();
+      var pegsTotalCnt = $("#pegsTotalCnt").val();
+      var rulebookTotalCnt = $("#rulebookTotalCnt").val();
+      var rulebookFile = $("#rulebookFile").val();
+      boardGameJson = {
+        name: name,
+        pieces: {
+          decodingBoard: {
+            totalCount: dbtotalCount,
+          },
+          pegs: {
+            totalCount: pegsTotalCnt,
+            types: types,
+          },
+          rulebook: {
+            totalCount: rulebookTotalCnt,
+            file: rulebookFile,
+          },
+        },
+      };
+
+      console.log(JSON.stringify(boardGameJson));
+
+      $.ajax({
+        url: "/board-game",
+        type: "POST",
+        data: JSON.stringify(boardGameJson),
+        contentType: "application/json",
+        dataType: "json",
+        cache: false,
+        success: (data) => {
+          console.log(data);
+        },
+      });
+    }
+
+    function addBoardGameTypes() {
+      var type = $("#type").val();
+      var typeCount = $("#typeCount").val();
+      var x = {
+        type: type,
+        count: typeCount,
+      };
+      types.push(x);
+    }
+  </script>
+
+  <body>
+    <form action="#">
+      <label>Name : </label>
+      <input type="text" id="name" />
+      <br />
+      <label>Decoding board total count : </label>
+      <input type="text" id="dbtotalCount" />
+      <br />
+      <label>Pegs total count : </label>
+      <input type="text" id="pegsTotalCnt" />
+      <br />
+      <label>Rulebook total count : </label>
+      <input type="text" id="rulebookTotalCnt" />
+      <br />
+      <label>Rulebook file : </label>
+      <input type="text" id="rulebookFile" />
+      <br />
+      <hr />
+      <label>Type : </label>
+      <select name="type" id="type">
+        <option value="code">code</option>
+        <option value="key">key</option>
+      </select>
+      <br />
+      <label>Type count : </label>
+      <input type="text" id="typeCount" />
+      <input type="button" value="Add" onClick="addBoardGameTypes()" />
+      <br />
+      <input type="button" value="Save" onClick="createBoardGameJson()" />
+    </form>
+  </body>
+</html>
